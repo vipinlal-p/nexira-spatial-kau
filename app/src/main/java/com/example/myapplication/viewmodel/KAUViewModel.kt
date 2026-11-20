@@ -16,6 +16,59 @@ data class KrishiBhavan(
     val district: String
 )
 
+object Strings {
+    fun get(key: String, isMalayalam: Boolean): String {
+        val map = if (isMalayalam) malayalamMap else englishMap
+        return map[key] ?: key
+    }
+
+    private val englishMap = mapOf(
+        "app_title" to "KAU Paddy Field GIS",
+        "announcements" to "Announcements",
+        "messages" to "Messages & Queries",
+        "admin" to "Admin",
+        "gis_map" to "GIS Map",
+        "search_hint" to "Search Survey No. or Farmer...",
+        "total_area" to "Total Area",
+        "registered_farmers" to "Registered Farmers",
+        "agricultural_officers" to "Agricultural Officers",
+        "upload_shapefile" to "Upload Shapefile / GeoJSON / Draw Polygon",
+        "mapped_parcels" to "Mapped Paddy Field Parcels",
+        "user_rbac" to "User Role & Access Control (RBAC)",
+        "krishi_bhavans" to "Krishi Bhavans",
+        "audit_logs" to "System Communication Audit Logs",
+        "logout" to "Logout",
+        "profile" to "User Profile",
+        "register_farmer" to "Register New Farmer",
+        "add_krishi_bhavan" to "Add New Krishi Bhavan",
+        "broadcast" to "Broadcast Announcement",
+        "send" to "Send"
+    )
+
+    private val malayalamMap = mapOf(
+        "app_title" to "കെ.എ.യു നെൽവയൽ ജി.ഐ.എസ്",
+        "announcements" to "അറിയിപ്പുകൾ",
+        "messages" to "സന്ദേശങ്ങളും സംശയങ്ങളും",
+        "admin" to "ഭരണാധികാരി",
+        "gis_map" to "ഭൂപടം",
+        "search_hint" to "സർവേ നമ്പറോ കർഷകനോ തിരയുക...",
+        "total_area" to "ആകെ വിസ്തൃതി",
+        "registered_farmers" to "രജിസ്റ്റർ ചെയ്ത കർഷകർ",
+        "agricultural_officers" to "കൃഷി ഉദ്യോഗസ്ഥർ",
+        "upload_shapefile" to "ഷേപ്പ്ഫൈൽ / ജിയോജെസൺ അപ്‌ലോഡ് ചെയ്യുക",
+        "mapped_parcels" to "ഭൂപടം തയ്യാറാക്കിയ നെൽവയലുകൾ",
+        "user_rbac" to "ഉപയോക്തൃ റോൾ നിയന്ത്രണം (RBAC)",
+        "krishi_bhavans" to "കൃഷിഭവനുകൾ",
+        "audit_logs" to "സിസ്റ്റം ആശയവിനിമയ ലോഗുകൾ",
+        "logout" to "പുറത്തിറങ്ങുക",
+        "profile" to "ഉപയോക്തൃ പ്രൊഫൈൽ",
+        "register_farmer" to "പുതിയ കർഷകനെ രജിസ്റ്റർ ചെയ്യുക",
+        "add_krishi_bhavan" to "പുതിയ കൃഷിഭവൻ ചേർക്കുക",
+        "broadcast" to "അറിയിപ്പ് നൽകുക",
+        "send" to "അയയ്ക്കുക"
+    )
+}
+
 class KAUViewModel : ViewModel() {
     var currentUser by mutableStateOf<User?>(null)
         private set
@@ -32,6 +85,9 @@ class KAUViewModel : ViewModel() {
     var users by mutableStateOf<List<User>>(KAUDataSource.users)
         private set
 
+    var isMalayalam by mutableStateOf(false)
+        private set
+
     var krishiBhavans by mutableStateOf<List<KrishiBhavan>>(
         listOf(
             KrishiBhavan(1, "Mannuthy Krishi Bhavan", "Thrissur"),
@@ -43,6 +99,10 @@ class KAUViewModel : ViewModel() {
 
     var errorMessage by mutableStateOf<String?>(null)
         private set
+
+    fun toggleLanguage() {
+        isMalayalam = !isMalayalam
+    }
 
     fun login(email: String): Boolean {
         val user = users.find { it.email.equals(email, ignoreCase = true) }
@@ -119,8 +179,8 @@ class KAUViewModel : ViewModel() {
             areaHa = areaHa,
             cropSeason = cropSeason,
             soilType = soilType,
-            latitude = lat,   // Respect exact user-entered latitude
-            longitude = lon,  // Respect exact user-entered longitude
+            latitude = lat,
+            longitude = lon,
             attributes = mapOf(
                 "Variety" to "Uma (MO 16)",
                 "Irrigation" to "Canal/Borewell",

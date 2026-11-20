@@ -11,12 +11,14 @@ import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.viewmodel.KAUViewModel
+import com.example.myapplication.viewmodel.Strings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +27,7 @@ fun DashboardScreen(viewModel: KAUViewModel) {
     var showMenu by remember { mutableStateOf(false) }
     val currentUser = viewModel.currentUser
     val isAdmin = currentUser?.role == "admin"
+    val isMalayalam = viewModel.isMalayalam
 
     Scaffold(
         topBar = {
@@ -32,16 +35,30 @@ fun DashboardScreen(viewModel: KAUViewModel) {
                 title = {
                     Text(
                         when (selectedTab) {
-                            0 -> "KAU Paddy Field GIS"
-                            1 -> "Announcements"
-                            2 -> "Messages & Queries"
-                            else -> "Admin Panel"
+                            0 -> Strings.get("app_title", isMalayalam)
+                            1 -> Strings.get("announcements", isMalayalam)
+                            2 -> Strings.get("messages", isMalayalam)
+                            else -> Strings.get("admin", isMalayalam)
                         },
                         color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp
                     )
                 },
                 actions = {
+                    // Language Switch Button
+                    TextButton(
+                        onClick = { viewModel.toggleLanguage() },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                    ) {
+                        Text(
+                            text = if (isMalayalam) "English" else "മലയാളം",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = Color(0xFFFFC107)
+                        )
+                    }
+
                     Box {
                         IconButton(onClick = { showMenu = !showMenu }) {
                             Icon(
@@ -67,7 +84,7 @@ fun DashboardScreen(viewModel: KAUViewModel) {
                             )
                             Divider()
                             DropdownMenuItem(
-                                text = { Text("Logout", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold) },
+                                text = { Text(Strings.get("logout", isMalayalam), color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold) },
                                 onClick = {
                                     showMenu = false
                                     viewModel.logout()
@@ -92,7 +109,7 @@ fun DashboardScreen(viewModel: KAUViewModel) {
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     icon = { Icon(Icons.Default.Map, contentDescription = null) },
-                    label = { Text("GIS Map") },
+                    label = { Text(Strings.get("gis_map", isMalayalam)) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color(0xFFFFC107),
                         unselectedIconColor = Color.White,
@@ -105,7 +122,7 @@ fun DashboardScreen(viewModel: KAUViewModel) {
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.Campaign, contentDescription = null) },
-                    label = { Text("Announcements") },
+                    label = { Text(Strings.get("announcements", isMalayalam)) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color(0xFFFFC107),
                         unselectedIconColor = Color.White,
@@ -118,7 +135,7 @@ fun DashboardScreen(viewModel: KAUViewModel) {
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
                     icon = { Icon(Icons.Default.Chat, contentDescription = null) },
-                    label = { Text("Messages") },
+                    label = { Text(Strings.get("messages", isMalayalam)) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color(0xFFFFC107),
                         unselectedIconColor = Color.White,
@@ -132,7 +149,7 @@ fun DashboardScreen(viewModel: KAUViewModel) {
                         selected = selectedTab == 3,
                         onClick = { selectedTab = 3 },
                         icon = { Icon(Icons.Default.AdminPanelSettings, contentDescription = null) },
-                        label = { Text("Admin") },
+                        label = { Text(Strings.get("admin", isMalayalam)) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color(0xFFFFC107),
                             unselectedIconColor = Color.White,
