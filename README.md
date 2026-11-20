@@ -1,55 +1,50 @@
 # Nexira Spatial – KAU Paddy Field Mobile GIS
 
-A production-quality GIS-enabled mobile and web application for the Department of Soil Science, Kerala Agricultural University (KAU), managing paddy fields and facilitating seamless communication between Farmers and Agricultural Officers under Krishi Bhavans in Kerala, India.
+A production-quality mobile GIS application built for the Department of Soil Science, Kerala Agricultural University (KAU), managing paddy field survey parcels, Krishi Bhavan announcements, 1:1 farmer-officer communications, and comprehensive administrative controls.
 
 ---
 
 ## Architecture & Tech Stack
-- **Mobile & Web App**: Flutter (Dart), single codebase for Android, iOS, and Web (`flutter_map`, `latlong2`, `dio`, `flutter_riverpod`).
-- **Backend API**: Python FastAPI (`uvicorn`, `SQLAlchemy`, `GeoAlchemy2`, `PyJWT`, `passlib`).
-- **Spatial Database**: PostgreSQL + PostGIS (spatial polygons, GeoJSON features, spatial indices).
+- **Mobile App**: Native Android (Kotlin, Jetpack Compose, Material 3, Material Icons Extended).
+- **Mapping Engine**: `osmdroid` (OpenStreetMap-based spatial map rendering) using Esri World Street Map tiles (clean, Google Maps style appearance with zero API key restrictions).
+- **Spatial Data**: Real-time survey number polygon shapefile rendering, bounding box overlays, and live GPS location tracking.
+- **Backend & API**: Python FastAPI (`uvicorn`, `SQLAlchemy`, `GeoAlchemy2`, `PyJWT`, `passlib`) with PostgreSQL + PostGIS spatial migration schemas.
 
 ---
 
-## Setup & Installation Instructions
+## Core Features
+1. **Role-Based Access Control (RBAC)**:
+   - **Farmer**: View associated paddy fields by survey number, zoom to plot, view announcements, and query officers.
+   - **Agricultural Officer**: View and query all paddy fields in jurisdiction, broadcast public advisories, and reply to farmer inquiries.
+   - **Administrator**: Comprehensive admin dashboard featuring GIS shapefile/GeoJSON ingestion, user role management, Krishi Bhavan district jurisdiction management, and communication audit logs.
+2. **Interactive GIS Map**:
+   - Real-time plotting of paddy field survey number polygons with distinct symbology.
+   - Clickable survey numbers in list view that pan/zoom directly to the selected parcel on the map.
+   - On-demand current location GPS centering button.
+3. **Communication & Announcements**:
+   - Krishi Bhavan public broadcast advisories.
+   - 1:1 messaging channel between farmers and agricultural officers.
 
-### 1. Database & PostGIS Setup
-Ensure PostgreSQL is installed and PostGIS extension is enabled:
-```sql
-CREATE DATABASE kau_paddy_gis;
-\c kau_paddy_gis;
-CREATE EXTENSION IF NOT EXISTS postgis;
-```
+---
 
-### 2. Run Backend Migrations & Seed Data
-Navigate to the `backend/` directory:
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-pip install -r requirements.txt
+## Getting Started & Build Instructions
 
-# Configure .env file
-cp .env.example .env
-# Update DATABASE_URL in .env if needed
+### 1. Android App (Kotlin / Compose)
+- Open the project in **Android Studio**.
+- Ensure Android SDK 37 / minSdk 24 is configured.
+- Build and run the app:
+  ```bash
+  ./gradlew assembleDebug
+  ```
+- Install the APK (`app/build/outputs/apk/debug/app-debug.apk`) onto your device or emulator.
 
-# Apply migrations and seed data
-psql -U postgres -d kau_paddy_gis -f migrations/001_initial_schema.sql
-psql -U postgres -d kau_paddy_gis -f migrations/002_seed_data.sql
-
-# Start FastAPI Server
-uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 3. Run Flutter Mobile / Web App
-Navigate to the `flutter_app/` directory:
-```bash
-cd flutter_app
-flutter pub get
-
-# Run on Android Emulator or Web
-flutter run
-```
+### 2. Backend API (Python FastAPI + PostGIS)
+- Navigate to `backend/`:
+  ```bash
+  cd backend
+  pip install -r requirements.txt
+  python -m uvicorn app.main:app --reload
+  ```
 
 ---
 

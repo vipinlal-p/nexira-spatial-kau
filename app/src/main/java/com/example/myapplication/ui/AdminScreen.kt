@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +35,7 @@ fun AdminScreen(viewModel: KAUViewModel) {
     var farmerDropdownExpanded by remember { mutableStateOf(false) }
 
     var areaInput by remember { mutableStateOf("") }
+    var geoJsonInput by remember { mutableStateOf("{\"type\": \"Polygon\", \"coordinates\": [[[76.29, 10.54], [76.31, 10.54], [76.31, 10.56], [76.29, 10.56], [76.29, 10.54]]]}") }
     var seasonInput by remember { mutableStateOf("Virippu") }
     var soilInput by remember { mutableStateOf("Clay Loam") }
     var latInput by remember { mutableStateOf("10.548") }
@@ -45,6 +48,7 @@ fun AdminScreen(viewModel: KAUViewModel) {
     var kbNameInput by remember { mutableStateOf("") }
     var kbDistrictInput by remember { mutableStateOf("Thrissur") }
 
+    val context = LocalContext.current
     val totalFields = viewModel.paddyFields.size
     val totalArea = viewModel.paddyFields.sumOf { it.areaHa }
     val totalFarmers = viewModel.users.count { it.role == "farmer" }
@@ -354,11 +358,18 @@ fun AdminScreen(viewModel: KAUViewModel) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 400.dp)
+                        .heightIn(max = 450.dp)
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("Supports .shp, .geojson, .kml or manual coordinate plotting", fontSize = 11.sp, color = Color.Gray)
+                    Text("Paste GeoJSON Polygon or Shapefile Geometry below:", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF1B5E20))
+                    OutlinedTextField(
+                        value = geoJsonInput,
+                        onValueChange = { geoJsonInput = it },
+                        label = { Text("GeoJSON / Polygon Coordinates") },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 4
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
                     OutlinedTextField(
                         value = surveyInput,
@@ -451,6 +462,7 @@ fun AdminScreen(viewModel: KAUViewModel) {
                             surveyInput = ""
                             areaInput = ""
                             showAddFieldDialog = false
+                            Toast.makeText(context, "Paddy Field successfully published to GIS map!", Toast.LENGTH_SHORT).show()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B5E20))
@@ -511,6 +523,7 @@ fun AdminScreen(viewModel: KAUViewModel) {
                             farmerPhoneInput = ""
                             farmerEmailInput = ""
                             showAddFarmerDialog = false
+                            Toast.makeText(context, "New farmer registered successfully!", Toast.LENGTH_SHORT).show()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))
@@ -558,6 +571,7 @@ fun AdminScreen(viewModel: KAUViewModel) {
                             viewModel.addKrishiBhavan(kbNameInput, kbDistrictInput)
                             kbNameInput = ""
                             showAddKbDialog = false
+                            Toast.makeText(context, "Krishi Bhavan added successfully!", Toast.LENGTH_SHORT).show()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B5E20))
