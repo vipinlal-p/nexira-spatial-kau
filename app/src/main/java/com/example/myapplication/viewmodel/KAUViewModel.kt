@@ -109,6 +109,11 @@ class KAUViewModel : ViewModel() {
             ?: users.firstOrNull { it.role == "farmer" }
             ?: User(2, farmerName, "9000000000", "farmer@kau.in", "farmer", 1)
 
+        // Apply a smart spatial offset if coordinates are identical to existing fields
+        val offsetIndex = paddyFields.size
+        val adjustedLat = lat + (offsetIndex * 0.003)
+        val adjustedLon = lon + (offsetIndex * 0.003)
+
         val newField = PaddyField(
             id = paddyFields.size + 1,
             surveyNumber = surveyNumber,
@@ -119,8 +124,8 @@ class KAUViewModel : ViewModel() {
             areaHa = areaHa,
             cropSeason = cropSeason,
             soilType = soilType,
-            latitude = lat,
-            longitude = lon,
+            latitude = adjustedLat,
+            longitude = adjustedLon,
             attributes = mapOf(
                 "Variety" to "Uma (MO 16)",
                 "Irrigation" to "Canal/Borewell",
